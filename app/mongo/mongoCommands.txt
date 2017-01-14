@@ -1,0 +1,93 @@
+mongo ds033163.mongolab.com:33163/subwaytunes -u test -p test
+mongo localhost:27017/subwaytunes
+
+db.persons.find({})
+db.persons.find({"email":"test@tunes.com"})
+db.persons.find({
+    "$or": [
+        {
+            "email":"test@tunes.com"
+        }
+    ]
+})
+db.persons.find({
+    "$or": [
+        {
+            "email":"test@tunes.com"
+        },
+        {
+            "band":"toidiu"
+        }
+    ]
+})
+
+
+db.performAdd.find({
+ loc : {
+      $near : {
+        $geometry : {
+          type : "Point" ,
+          coordinates : [-73.965355,40.782865]
+        },
+        $maxDistance : 20000
+      }
+    }
+})
+
+
+db.performAdd.find({
+	loc : {
+      $near : {
+        $geometry : {
+          type : "Point" ,
+          coordinates : [44,22]
+        }
+      }
+    },
+    userEmail : "test@email.com",
+ 	date : {
+		"$gte": 2010-10-01
+    }
+
+})
+
+
+
+
+
+db.performAdd.find({
+	loc : {
+      $near : {
+        $geometry : {
+          type : "Point" ,
+          coordinates : [44,22]
+        }
+      }
+    },
+ 	date : {
+		"$gte": 2010-10-01
+    }
+
+})
+
+
+
+db.performAdd.find({
+	loc : {
+      $near : {
+        $geometry : {
+          type : "Point" ,
+          coordinates : [44,22]
+        }
+      }
+    }
+})
+
+
+
+db.performAdd.find({
+ 	date : {
+		"$gte": 2010-10-01
+    }
+
+})
