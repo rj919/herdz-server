@@ -17,18 +17,25 @@ object MongoObj {
 
   println("------creating index------")
   createIndex
+  println("------index created------")
 
   def createIndex {
     import reactivemongo.api.indexes.Index
     import reactivemongo.api.indexes.IndexType.{Ascending, Geo2DSpherical}
-    println("------creating index------")
-    val index: Index = new Index(Seq(
+    val markerIndex = Index(Seq(
       ("loc", Geo2DSpherical)
-//      , ("date", Ascending)
     ))
-    println("------index created------")
+    val locVecIndex = Index(Seq(
+      ("loc", Geo2DSpherical)
+      , ("ts", Ascending)
+    ))
 
-    marker.map(_.indexesManager.create(index))
+    for {
+      m <- marker
+      mi <- m.indexesManager.create(markerIndex)
+      l <- locVec
+      li <- l.indexesManager.create(locVecIndex)
+    } yield (mi, li)
   }
 
   private def collection(name: String): Future[JSONCollection] =

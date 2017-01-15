@@ -32,8 +32,7 @@ class Application extends Controller {
 
   def protests(lat: Double, lng: Double, radius: Int, ts: Long) = Action.async {
     for {
-      p <- MongoObj.protests
-      list <- p.find(Json.obj()).cursor[Protest](primary).collect[List]()
+      list <- Query.queryGetProtests(lat, lng, radius, ts)
     } yield Ok(Json.toJson(list))
 
 

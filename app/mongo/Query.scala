@@ -1,10 +1,12 @@
 package mongo
 
-import models.Marker
+import models.{Marker, Protest}
 import mongo.Point.pointWrites
 import org.joda.time.DateTime
 import play.api.libs.json.Json.obj
 import reactivemongo.api.ReadPreference.primary
+import reactivemongo.bson.BSONString
+import reactivemongo.core.commands.Group
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,8 +33,7 @@ object Query {
   import scala.language.postfixOps
 
 
-
-  def queryGetMarkers(lat: Double, lng: Double, radius: Int, ts: Long): Future[Vector[Marker]] = {
+  def queryGetProtests(lat: Double, lng: Double, radius: Int, ts: Long): Future[Vector[Protest]] = {
 
     //Location---------------
     val qLoc = obj("loc" ->
@@ -45,11 +46,31 @@ object Query {
     )
 
     //Date---------------
-//    val maxD = new DateTime(ts)
-//    val minD = maxD.minusSeconds(60)
-//    val qDate = obj("date" -> Map("$gt" -> minD, "$lt" -> maxD))
+    val maxD = new DateTime(ts)
+    val minD = maxD.minusSeconds(60)
+    val qDate = obj("date" -> Map("$gt" -> minD, "$lt" -> maxD))
 
-//    val query = qDate.deepMerge(qLoc)
+    val query = qDate.deepMerge(qLoc)
+    for {
+      m <- MongoObj.protests
+//    d <- m.aggregate(Group(BSONString("$state"))(
+//      "maxPop" -> MaxField("population")
+//    )).map(_.firstBatch))
+      list <- m.find(query).cursor[Protest](primary).collect[Vector]()
+    } yield list
+  }
+
+  def queryGetMarkers(lat: Double, lng: Double, radius: Int, ts: Long): Future[Vector[Marker]] = {
+
+    //Location---------------
+    val qLoc = obj("loc" ->
+      obj("$near" ->
+        obj(
+          "$geometry" -> pointWrites.writes(new Point(lng, lat))
+          , "$maxDistance" -> radius
+        )
+      )
+    )
 
     for {
       m <- MongoObj.marker
