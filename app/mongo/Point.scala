@@ -14,13 +14,23 @@ import play.api.libs.json._
 case class Point(lng: Double, lat: Double)
 
 
-class PointMapping(val lng: Double, val lat: Double) extends Mapping[Point] {
+class PointMapping(val lng: Double = 0, val lat: Double = 0) extends Mapping[Point] {
   val constraints = Nil
   val mappings = Seq(this)
 
   override def bind(data: Map[String, String]): Either[Seq[FormError], Point] = {
-    val pt = new Point(lng, lat)
-    Right(pt)
+    val optPoint = for {
+      sLat <- data.get("lat")
+      sLng <- data.get("lng")
+      lat = sLat.toDouble
+      lng = sLng.toDouble
+    } yield Point(lng, lat)
+
+    optPoint match {
+      case Some(pnt) => Right(pnt)
+      case None => Left(Seq(FormError(key, "unable to create locaiton from lat/lng")))
+    }
+
   }
 
   override def verifying(constraints: Constraint[Point]*): Mapping[Point] = {
@@ -57,7 +67,7 @@ object Point {
   implicit val pointFormat = Format(pointReads, pointWrites)
 
 
-  val pointMapping: PointMapping = new PointMapping(lat = 0, lng = 0)
+  val pointMapping: PointMapping = new PointMapping()
 
 }
 

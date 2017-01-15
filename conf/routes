@@ -13,7 +13,7 @@ POST        /protest             controllers.Application.addProtest
 PUT         /join                controllers.Application.join
 
 #Location Vector
-POST        /movement            controllers.Application.movement(pid: Long, uid: Long, lat: Double, lng: Double, deg: Double, speed: Double, ts: Long)
+POST        /movement            controllers.Application.movement
 
 #Marker
 GET         /marker              controllers.Application.getMarkers(lat: Double, lng: Double, radius: Int, ts: Long)

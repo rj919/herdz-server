@@ -73,8 +73,10 @@ class Application extends Controller {
     Future(Ok(BSONObjectID.generate().stringify))
   }
 
-  def movement(pid: Long, uid: Long, lat: Double, lng: Double, deg: Double, speed: Double, ts: Long) = Action.async {
+//  def movement(pid: String, uid: String, lat: Double, lng: Double, deg: Double, speed: Double, ts: Long) = Action.async {
+  def movement = Action.async {
     //fixme add a new location vector value
+
     Future(Ok(""))
   }
 
@@ -88,16 +90,9 @@ class Application extends Controller {
     Marker.form.bindFromRequest()(req).fold(
       formWithErrors => Future(BadRequest(formWithErrors.toString)),
       marker => {
-        val pt: Point = {
-            val formUrl = req.body.asFormUrlEncoded.get
-            val lat = formUrl.get("lat").get.head.toDouble
-            val lng = formUrl.get("lng").get.head.toDouble
-            new Point(lng, lat)
-        }
-
         for {
           m <- MongoObj.marker
-          a <- m.insert(marker.copy(loc = pt))
+          a <- m.insert(marker)
         } yield Ok(a.ok.toString)
       }
     )
