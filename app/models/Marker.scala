@@ -7,7 +7,7 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.data.Forms._
 import play.api.data._
-  import mongo.Point._
+import mongo.Point._
 
 /**
   * Created by toidiu on 1/14/17.

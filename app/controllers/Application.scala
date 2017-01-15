@@ -18,6 +18,18 @@ class Application extends Controller {
   import reactivemongo.api.ReadPreference
   import reactivemongo.play.json._
 
+  def addProtest() = Action.async { req =>
+    Protest.form.bindFromRequest()(req).fold(
+      formWithErrors => Future(BadRequest(formWithErrors.toString)),
+      protest => {
+        for {
+          m <- MongoObj.protests
+          a <- m.insert(protest)
+        } yield Ok(a.ok.toString)
+      }
+    )
+  }
+
   def protests(lat: Double, lng: Double, radius: Int, ts: Long) = Action.async {
     for {
       p <- MongoObj.protests
@@ -35,7 +47,8 @@ class Application extends Controller {
     //                uid
     //                pid
     //                lat
-    //                lnd
+    //                lng
+    //                ts
     //                degree
     //                speed
     //            }
@@ -49,21 +62,24 @@ class Application extends Controller {
     //        .collect[List]()
     //    )
     //    d.map(s => Ok(Json.toJson(s)))
+
+    //fixme add index for geo and time
+
   }
 
 
   def join = Action.async {
+    //fixme increment the # of participation
     Future(Ok(BSONObjectID.generate().stringify))
   }
 
   def movement(pid: Long, uid: Long, lat: Double, lng: Double, deg: Double, speed: Double, ts: Long) = Action.async {
+    //fixme add a new location vector value
     Future(Ok(""))
   }
 
   def getMarkers(lat: Double, lng: Double, radius: Int, ts: Long) = Action.async {
     for {
-//      m <- MongoObj.marker
-//      list <- m.find(Json.obj()).cursor[Marker](primary).collect[List]()
       list <- Query.queryGetMarkers(lat, lng, radius, ts)
     } yield Ok(Json.toJson(list))
   }
@@ -87,19 +103,4 @@ class Application extends Controller {
     )
   }
 
-  //  def addProtest() = Action.async {
-  //    val d = MongoObj.protests.flatMap(
-  //      _.insert(Protest("Black Lives Matter", "description"))
-  //    )
-  //    d.map(e => Ok(e.toString))
-  //  }
-  //
-  //  def herd() = Action.async {
-  //    val d = MongoObj.locVec.flatMap(
-  //      _.find(Json.obj())
-  //        .cursor[LocVec](ReadPreference.primary)
-  //        .collect[List]()
-  //    )
-  //    d.map(e => Ok(e.toString))
-  //  }
 }

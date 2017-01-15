@@ -6,7 +6,8 @@
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 #Protest
-GET         /protests            controllers.Application.protests(lat: Double, lng: Double, radius: Int, ts: Long)
+GET         /protest/list        controllers.Application.protests(lat: Double, lng: Double, radius: Int, ts: Long)
+POST        /protest             controllers.Application.addProtest
 
 #User
 PUT         /join                controllers.Application.join
@@ -16,6 +17,5 @@ POST        /movement            controllers.Application.movement(pid: Long, uid
 
 #Marker
 GET         /marker              controllers.Application.getMarkers(lat: Double, lng: Double, radius: Int, ts: Long)
-#POST        /marker              controllers.Application.addMarker(lat: Double, lng: Double, mId: Int)
 POST        /marker              controllers.Application.addMarker
 

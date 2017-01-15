@@ -45,17 +45,15 @@ object Query {
     )
 
     //Date---------------
-    val maxD = new DateTime(ts)
-    val minD = maxD.minusSeconds(60)
-    val qDate = obj("date" -> Map("$gt" -> minD, "$lt" -> maxD))
+//    val maxD = new DateTime(ts)
+//    val minD = maxD.minusSeconds(60)
+//    val qDate = obj("date" -> Map("$gt" -> minD, "$lt" -> maxD))
 
-    println("-=-=-=-=")
-    val query = qDate.deepMerge(qLoc)
-    println(query)
+//    val query = qDate.deepMerge(qLoc)
 
     for {
       m <- MongoObj.marker
-      list <- m.find(query).cursor[Marker](primary).collect[Vector]()
+      list <- m.find(qLoc).cursor[Marker](primary).collect[Vector]()
     } yield list
   }
 
