@@ -28,7 +28,7 @@ class PointMapping(val lng: Double = 0, val lat: Double = 0) extends Mapping[Poi
 
     optPoint match {
       case Some(pnt) => Right(pnt)
-      case None => Left(Seq(FormError(key, "unable to create locaiton from lat/lng")))
+      case None => Left(Seq(FormError(key, "unable to create location from lat/lng")))
     }
 
   }

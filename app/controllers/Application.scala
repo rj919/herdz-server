@@ -1,6 +1,6 @@
 package controllers
 
-import models.{Marker, Protest}
+import models.{LocVec, Marker, Protest}
 import mongo.{MongoObj, Point, Query}
 import play.api.mvc._
 import play.modules.reactivemongo.json.ImplicitBSONHandlers._
@@ -74,10 +74,16 @@ class Application extends Controller {
   }
 
 //  def movement(pid: String, uid: String, lat: Double, lng: Double, deg: Double, speed: Double, ts: Long) = Action.async {
-  def movement = Action.async {
-    //fixme add a new location vector value
-
-    Future(Ok(""))
+  def movement = Action.async { req =>
+    LocVec.form.bindFromRequest()(req).fold(
+      formWithErrors => Future(BadRequest(formWithErrors.toString)),
+      locVec => {
+        for {
+          m <- MongoObj.locVec
+          a <- m.insert(locVec)
+        } yield Ok(a.ok.toString)
+      }
+    )
   }
 
   def getMarkers(lat: Double, lng: Double, radius: Int, ts: Long) = Action.async {
