@@ -1,8 +1,7 @@
 package mongo
 
-import play.api.data.format.Formatter
-import play.api.data.validation.Constraint
 import play.api.data._
+import play.api.data.validation.Constraint
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._

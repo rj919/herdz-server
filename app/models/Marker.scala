@@ -32,5 +32,4 @@ object Marker {
     )(Marker.apply)(Marker.unapply)
   )
 
-
 }

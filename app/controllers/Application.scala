@@ -5,6 +5,7 @@ import mongo.{MongoObj, Point}
 import play.api.mvc._
 import play.modules.reactivemongo.json.ImplicitBSONHandlers._
 import play.modules.reactivemongo.json._
+import reactivemongo.api.ReadPreference.primary
 import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,20 +13,15 @@ import scala.concurrent.Future
 
 class Application extends Controller {
 
-  def index = Action {
-    Ok("Your new application is ready.")
-  }
-
-
   import play.api.libs.json._
   import play.api.mvc._
   import reactivemongo.api.ReadPreference
   import reactivemongo.play.json._
 
-  def protests(lat: Double, lng: Double, rad: Int, ts: Long) = Action.async {
+  def protests(lat: Double, lng: Double, radius: Int, ts: Long) = Action.async {
     for {
       p <- MongoObj.protests
-      list <- p.find(Json.obj()).cursor[Protest](ReadPreference.primary).collect[List]()
+      list <- p.find(Json.obj()).cursor[Protest](primary).collect[List]()
     } yield Ok(Json.toJson(list))
 
 
@@ -64,17 +60,11 @@ class Application extends Controller {
     Future(Ok(""))
   }
 
-  def getMarkers(lat: Double, lng: Double, rad: Int, ts: Long) = Action.async {
-
-    //markers [
-    //  {
-    //      lat
-    //      lng
-    //      mid
-    //  }
-    //]
-
-    Future(Ok(""))
+  def getMarkers(lat: Double, lng: Double, radius: Int, ts: Long) = Action.async {
+    for {
+      m <- MongoObj.marker
+      list <- m.find(Json.obj()).cursor[Marker](primary).collect[List]()
+    } yield Ok(Json.toJson(list))
   }
 
   def addMarker = Action.async { req =>
