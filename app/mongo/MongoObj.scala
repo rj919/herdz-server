@@ -16,8 +16,20 @@ object MongoObj {
   private lazy val reactiveMongoApi = current.injector.instanceOf[ReactiveMongoApi]
 
   println("------creating index------")
-  //  PerformObj.createIndex
-  println("------index created------")
+  createIndex
+
+  def createIndex {
+    import reactivemongo.api.indexes.Index
+    import reactivemongo.api.indexes.IndexType.{Ascending, Geo2DSpherical}
+    println("------creating index------")
+    val index: Index = new Index(Seq(
+      ("loc", Geo2DSpherical)
+//      , ("date", Ascending)
+    ))
+    println("------index created------")
+
+    marker.map(_.indexesManager.create(index))
+  }
 
   private def collection(name: String): Future[JSONCollection] =
     reactiveMongoApi.database.map(_.collection[JSONCollection](name))

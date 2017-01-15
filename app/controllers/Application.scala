@@ -1,7 +1,7 @@
 package controllers
 
 import models.{Marker, Protest}
-import mongo.{MongoObj, Point}
+import mongo.{MongoObj, Point, Query}
 import play.api.mvc._
 import play.modules.reactivemongo.json.ImplicitBSONHandlers._
 import play.modules.reactivemongo.json._
@@ -62,8 +62,9 @@ class Application extends Controller {
 
   def getMarkers(lat: Double, lng: Double, radius: Int, ts: Long) = Action.async {
     for {
-      m <- MongoObj.marker
-      list <- m.find(Json.obj()).cursor[Marker](primary).collect[List]()
+//      m <- MongoObj.marker
+//      list <- m.find(Json.obj()).cursor[Marker](primary).collect[List]()
+      list <- Query.queryGetMarkers(lat, lng, radius, ts)
     } yield Ok(Json.toJson(list))
   }
 
@@ -85,7 +86,6 @@ class Application extends Controller {
       }
     )
   }
-
 
   //  def addProtest() = Action.async {
   //    val d = MongoObj.protests.flatMap(

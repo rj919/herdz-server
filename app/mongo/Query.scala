@@ -32,7 +32,7 @@ object Query {
 
 
 
-  def getMarkers(lat: Double, lng: Double, ts: Long, radius: Int): Future[Vector[Marker]] = {
+  def queryGetMarkers(lat: Double, lng: Double, radius: Int, ts: Long): Future[Vector[Marker]] = {
 
     //Location---------------
     val qLoc = obj("loc" ->
