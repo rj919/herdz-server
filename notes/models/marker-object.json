@@ -1,0 +1,13 @@
+{
+  "marker_id": "DlmRb5ZwXRBUwBCaJ0Wqjob3MUxdpqG54gy7VNE-FMMV-G42",
+  "created": 1484443080.1308572,
+  "expires": 1484453080.1308572,
+  "lat": 40.738594,
+  "lon": -73.987784,
+  "identifier": 181,
+  "permission": "participant",
+  "name": "Port-a-Potty",
+  "img": "port-a-potty.png",
+  "desc": "A bathroom in a box",
+  "user_id": "4ywQKkBgm2LtUL6Hw8qkMiWr2nKlaXwee_UpsCO1aiBp5OM-"
+}
