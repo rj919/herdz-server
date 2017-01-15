@@ -1,20 +1,21 @@
 package mongo
 
+import play.api.data.format.Formatter
 import play.api.data.validation.Constraint
-import play.api.data.{FormError, Mapping, WrappedMapping}
+import play.api.data._
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 
 /**
- * Created by toidiu on 11/9/15.
- */
+  * Created by toidiu on 11/9/15.
+  */
 
 //http://stackoverflow.com/a/20629821/2369122
 case class Point(lng: Double, lat: Double)
 
 
-class PointMapping(val lng: Double = 0, val lat: Double = 0) extends Mapping[Point] {
+class PointMapping(val lng: Double, val lat: Double) extends Mapping[Point] {
   val constraints = Nil
   val mappings = Seq(this)
 
@@ -41,12 +42,12 @@ class PointMapping(val lng: Double = 0, val lat: Double = 0) extends Mapping[Poi
 }
 
 
-object PointObj {
+object Point {
 
-  val pointWrites = Writes[Point]( p =>
+  val pointWrites = Writes[Point](p =>
     Json.obj(
-        "type" -> JsString("Point"),
-        "coordinates" -> Json.arr(JsNumber(p.lng), JsNumber(p.lat))
+      "type" -> JsString("Point"),
+      "coordinates" -> Json.arr(JsNumber(p.lng), JsNumber(p.lat))
     )
   )
 
@@ -57,6 +58,7 @@ object PointObj {
   implicit val pointFormat = Format(pointReads, pointWrites)
 
 
-  val pointMapping = new PointMapping()
+  val pointMapping: PointMapping = new PointMapping(lat = 0, lng = 0)
+
 }
 

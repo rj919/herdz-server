@@ -26,5 +26,9 @@ object MongoObj {
 
   def protests: Future[JSONCollection] = collection("protest")
 
+  def locVec: Future[JSONCollection] = collection("locVec")
+
+  def marker: Future[JSONCollection] = collection("marker")
+
 
 }
