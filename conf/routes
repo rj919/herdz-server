@@ -2,14 +2,20 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET         /                    controllers.Application.index
-
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
-#User
-POST        /protest             controllers.Application.addProtest()
-GET         /protest/list        controllers.Application.protest()
-
 #Protest
+GET         /protest/list        controllers.Application.protests(lat: Double, lng: Double, radius: Int, ts: Long)
+POST        /protest             controllers.Application.addProtest
+
+#User
+PUT         /join                controllers.Application.join
+
+#Location Vector
+POST        /movement            controllers.Application.movement
+
+#Marker
+GET         /marker              controllers.Application.getMarkers(lat: Double, lng: Double, radius: Int, ts: Long)
+POST        /marker              controllers.Application.addMarker
+
