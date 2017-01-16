@@ -4,7 +4,7 @@ __license__ = 'MIT'
 
 # https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points#4913653
 
-from math import radians, cos, sin, asin, sqrt, atan2, degrees
+from math import radians, cos, sin, asin, sqrt, atan2, degrees, floor
 
 def haversine_distance(lon1, lat1, lon2, lat2):
     """
@@ -41,6 +41,7 @@ trans_path = 'moves-trans.json'
 vector_single = 'vector-single.json'
 protest_path = 'protest-boot.json'
 vector_path = 'vector-boot.json'
+vector_caravan = 'vector-caravan.json'
 
 from time import time
 from pprint import pprint
@@ -48,14 +49,62 @@ from labpack.records.settings import save_settings, load_settings
 from labpack.records.id import labID
 
 trans_details = load_settings(trans_path)['protests']
-protest_details = load_settings(protest_path)['protests']
-bootstrap_list = []
-for protest in trans_details:
-    for vector in protest['vectors']:
-        bootstrap_list.append(vector)
+protest_list = load_settings(protest_path)['protests']
+vector_list = load_settings(vector_single)['vectors']
 
-pprint(bootstrap_list)
-save_settings(vector_single, {'vectors': bootstrap_list}, overwrite=True)
+
+protest_map = {}
+for protest in protest_list:
+    protest_map[protest['pid']] = protest['participants']
+
+bootstrap_list = []
+for i in range(len(vector_list)):
+    vector = vector_list[i]
+    offset_count = 0
+    user = vector['uid']
+    pid = vector['pid']
+    ts = vector['ts']
+    for j in range(len(protest_map[pid])):
+        participant = protest_map[pid][j]
+        if participant == user:
+            bootstrap_list.append(vector)
+        else:
+            time_mod = j % 24
+            if time_mod == 0:
+                offset_count += 1
+                space_mod = offset_count % 2
+                k = floor(offset_count / 2) + 1
+                dummy_vector = {}
+            # map to next vector if space_mod
+                if space_mod:
+                    if i + k < len(vector_list):
+                        dummy_vector.update(**vector_list[i + k])
+            # else map to prior vector
+                else:
+                    if i - k >= 0:
+                        dummy_vector.update(**vector_list[i - k])
+            # check that dummy vector is same pid
+                if dummy_vector:
+                    if dummy_vector['pid'] == pid:
+                        dummy_vector['uid'] = participant
+                        dummy_vector['ts'] = ts
+                        bootstrap_list.append(dummy_vector)
+
+for vector in bootstrap_list:
+    print(vector['uid'], vector['ts'], vector['lat1'])
+
+save_settings(vector_caravan, { 'vectors': bootstrap_list }, overwrite=True)
+
+# trans_details = load_settings(trans_path)['protests']
+# protest_details = load_settings(protest_path)['protests']
+# bootstrap_list = []
+# for protest in trans_details:
+#     for vector in protest['vectors']:
+#         bootstrap_list.append(vector)
+#
+# pprint(bootstrap_list)
+# save_settings(vector_single, {'vectors': bootstrap_list}, overwrite=True)
+
 # bootstrap_list = []
 # protest_map = {
 #     'LfqaDlRpblNaDQ40CNc4lXVU_551Nau62y86': {
